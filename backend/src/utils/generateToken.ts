@@ -16,7 +16,7 @@ const generateToken = async ({
       expiresIn: "15d",
     });
 
-    res.cookie(token, {
+    res.cookie("jwt", token, {
       httpOnly: true,
       sameSite: "strict",
       maxAge: 15 * 24 * 60 * 1000,

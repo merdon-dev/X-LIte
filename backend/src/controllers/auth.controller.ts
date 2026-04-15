@@ -60,9 +60,68 @@ export const SignIn = async (req: Request, res: Response) => {
   try {
     const { userName, password } = req.body;
 
-    const user = User.findOne({ userName }).select("-password");
-    const isPasswordHasMatch = await bcrypt.compare(password, user.password);
+    const user = await User.findOne({ userName }).select("+password");
+    const isPasswordHasMatch = await bcrypt.compare(
+      password,
+      user?.password || "",
+    );
+
+    if (!user || !isPasswordHasMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid username or password",
+      });
+    }
+
+    generateToken({ userId: String(user._id), res });
+
+    const userObj = user.toObject();
+
+    const { password: _, ...safeUser } = userObj;
+
+    res.json({
+      success: true,
+      data: safeUser,
+    });
   } catch (error) {
+    console.log(`error in sign in${error}`);
+
+    res.status(500).json({
+      success: false,
+      message: serverErrorMsg(),
+    });
+  }
+};
+
+export const SignOut = async (req: Request, res: Response) => {
+  try {
+    res.clearCookie("jwt");
+    res.json({
+      success: true,
+      message: "Sign out successfully",
+    });
+  } catch (error) {
+    console.log(`error in sign out ${error}`);
+
+    res.status(500).json({
+      success: false,
+      message: serverErrorMsg(),
+    });
+  }
+};
+
+export const GetUser = async (req: Request, res: Response) => {
+  try {
+    const user = req.user; // To get user from middleware update custom type and extend request and update config
+
+    res.json({
+      success: true,
+      message: "Get user successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.log(`error in sign out ${error}`);
+
     res.status(500).json({
       success: false,
       message: serverErrorMsg(),
