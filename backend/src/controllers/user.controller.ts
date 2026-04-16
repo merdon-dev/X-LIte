@@ -54,8 +54,14 @@ export const followUnFollowUser = async (
 ) => {
   try {
     const { id } = req.params;
+    if (!req.user) {
+      return next(new AppError("User not found", 404));
+    }
+    if (!id) {
+      return next(new AppError("User id is required", 400));
+    }
 
-    if (id === req.user._id) {
+    if (id === req.user._id.toString()) {
       return next(new AppError("You can't follow yourself", 400));
     }
 
@@ -66,7 +72,7 @@ export const followUnFollowUser = async (
       return next(new AppError("User not found", 404));
     }
 
-    const isFollowing = currentUser.following.includes(id);
+    const isFollowing = currentUser.following.includes(userToModify._id);
 
     if (isFollowing) {
       // Unfollow
@@ -113,7 +119,9 @@ export const getSuggestedUsers = async (
   next: NextFunction,
 ) => {
   try {
-    const user = req.user;
+    if (!req.user) {
+      return next(new AppError("User not found", 404));
+    }
 
     const userId = req.user._id;
 
@@ -167,6 +175,10 @@ export const updateUserProfile = async (
       bio,
     } = req.body;
     let { profileImage, coverImage } = req.body;
+
+    if (!req.user) {
+      return next(new AppError("User not found", 404));
+    }
 
     const userId = req.user._id;
 

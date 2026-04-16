@@ -15,6 +15,7 @@ import authRouter from "./routes/auth.routes.js";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.routes.js";
 import postRouter from "./routes/post.route.js";
+import notificationRouter from "./routes/notification.route.js";
 import cloudinary from "cloudinary";
 
 app.use(express.json());
@@ -33,6 +34,7 @@ app.get("/check", (req, res) => {
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1", userRouter);
 app.use("/api/v1/post", postRouter);
+app.use("/api/v1/notification", notificationRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   res.status(err.status || 500).json({

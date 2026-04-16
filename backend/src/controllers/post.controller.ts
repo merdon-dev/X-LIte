@@ -667,7 +667,18 @@ export const getPostByUserName = async (
     }
 
     const postByUser = await PostDb.find({
-      userId: { $in: user?._id },
+      userId: user._id,
+    })
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "userId",
+        select: "userName profileImage fullName",
+      });
+
+    return res.status(200).json({
+      success: true,
+      message: "Posts fetched successfully",
+      posts: postByUser,
     });
   } catch (error) {
     console.log(`error in get posts by username ${error}`);

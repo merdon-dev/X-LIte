@@ -11,7 +11,7 @@ import {
   getAllPostsByUser,
   getLikedPosts,
   getFollowingUsersPost,
-  getUserPost,
+  getPostByUserName,
 } from "../controllers/post.controller.js";
 import protectRoute from "../middleware/protectRoute.js";
 
@@ -23,7 +23,7 @@ router.get("/get-allPostsByUser", protectRoute, getAllPostsByUser);
 router.get("/get/:id", protectRoute, getPostById);
 router.get("/likes/:id", protectRoute, getLikedPosts);
 router.get("/following-posts", protectRoute, getFollowingUsersPost);
-router.get("/user/:userName", protectRoute, getUserPost);
+router.get("/user/:userName", protectRoute, getPostByUserName);
 
 // POST Method
 router.post("/create", protectRoute, createPost);
