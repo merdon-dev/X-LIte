@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import AppError from "../utils/AppError.js";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config/env.js";
-import userModel from "../models/user.model.js";
+import userModel, { IUser } from "../models/user.model.js";
 
 interface JwtPayloadCustom {
   userId: string;
@@ -10,7 +10,7 @@ interface JwtPayloadCustom {
 
 // 🔥 extend request type
 export interface AuthRequest extends Request {
-  user?: any;
+  user?: IUser;
 }
 
 const protectRoute = async (

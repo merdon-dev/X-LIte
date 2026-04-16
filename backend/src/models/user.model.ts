@@ -1,6 +1,26 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Types } from "mongoose";
 
-const UserSchema = new mongoose.Schema(
+export interface IUser extends Document {
+  userName: string;
+  fullName: string;
+  email: string;
+  password: string;
+
+  followers: Types.ObjectId[];
+  following: Types.ObjectId[];
+
+  profileImage: string;
+  coverImage: string;
+  bio: string;
+  link: string;
+
+  likedPosts: Types.ObjectId[];
+
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const UserSchema = new mongoose.Schema<IUser>(
   {
     userName: {
       type: String,
@@ -49,10 +69,18 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    likedPosts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+        default: [],
+      },
+    ],
   },
   {
     timestamps: true,
   },
 );
 
-export default mongoose.model("User", UserSchema);
+const User = mongoose.model<IUser>("User", UserSchema);
+export default User;

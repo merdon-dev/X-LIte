@@ -1,6 +1,28 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Types } from "mongoose";
 
-const PostSchema = new mongoose.Schema(
+// ✅ Interface
+export interface IPost extends Document {
+  userId: Types.ObjectId;
+
+  text: string;
+  image: string;
+
+  likes: {
+    userId: Types.ObjectId;
+  }[];
+
+  comments: {
+    userId: Types.ObjectId;
+    comment: string;
+    createdAt: Date;
+  }[];
+
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// ✅ Schema
+const PostSchema = new mongoose.Schema<IPost>(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -33,7 +55,13 @@ const PostSchema = new mongoose.Schema(
         },
         comment: {
           type: String,
-          default: "",
+          required: true,
+          trim: true,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+          index: true,
         },
       },
     ],
@@ -41,6 +69,7 @@ const PostSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-const PostDb = mongoose.model("Post", PostSchema);
+// ✅ Model
+const PostDb = mongoose.model<IPost>("Post", PostSchema);
 
 export default PostDb;
