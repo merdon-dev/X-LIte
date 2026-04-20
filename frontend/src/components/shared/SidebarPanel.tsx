@@ -33,9 +33,10 @@ const Sidebar = () => {
     },
     onSuccess: (data) => {
       toast.success(data.message);
-      queryClient.invalidateQueries({
-        queryKey: ["authUser"],
-      });
+      // queryClient.invalidateQueries({
+      //   queryKey: ["authUser"],
+      // });
+      queryClient.setQueryData(["authUser"], null); // 💥 clear user instantly
     },
   });
 

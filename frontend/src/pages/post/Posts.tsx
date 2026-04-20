@@ -1,19 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
 import PostSkeleton from "../../components/skeletons/PostSkeleton";
 import {
   axiosInstance,
   type ApiSuccessResponse,
 } from "../../services/axiosInstance";
 import Post from "./Post";
+import type { PostType } from "../../types/post.types";
 
 const Posts = ({
   feedType,
-  username,
+  userName,
   userId,
 }: {
   feedType?: string;
-  username?: string;
+  userName?: string;
   userId?: string;
 }) => {
   const getPostEndpoint = () => {
@@ -23,7 +23,7 @@ const Posts = ({
       case "following":
         return "post/following-posts";
       case "posts":
-        return `post/user/${username}`;
+        return `post/user/${userName}`;
       case "likes":
         return `post/likes/${userId}`;
       default:
@@ -38,7 +38,7 @@ const Posts = ({
     isLoading,
     isRefetching,
   } = useQuery({
-    queryKey: ["posts", feedType, username, userId],
+    queryKey: ["posts", "list", feedType || userName || userId],
     queryFn: async () => {
       const { data } =
         await axiosInstance.get<ApiSuccessResponse<any>>(POST_ENDPOINT);
@@ -66,8 +66,8 @@ const Posts = ({
       )}
       {!isLoading && !isRefetching && posts && (
         <div>
-          {posts.map((post: any) => (
-            <Post key={post._id} post={post} />
+          {posts.map((post: PostType) => (
+            <Post key={post._id} post={post} feedType={feedType} />
           ))}
         </div>
       )}

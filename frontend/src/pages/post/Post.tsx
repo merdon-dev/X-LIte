@@ -11,8 +11,9 @@ import LoadingSpinner from "../../components/skeletons/LoadingSpinner";
 import { axiosInstance } from "../../services/axiosInstance";
 import { useAuthHook } from "../../hooks/useAuthHook";
 import { useLikeHook } from "../../hooks/useLlikeHook";
+import { useCommentHook } from "../../hooks/useCommentHook";
 
-const Post = ({ post }: { post: any }) => {
+const Post = ({ post, feedType }: { post: any; feedType?: string }) => {
   const [comment, setComment] = useState("");
   const { data: authUser } = useAuthHook();
   const queryClient = useQueryClient();
@@ -37,28 +38,31 @@ const Post = ({ post }: { post: any }) => {
     },
   });
 
-  const { mutate: likePost, isPending: isLiking } = useLikeHook();
+  const { mutate: likePost, isPending: isLiking } = useLikeHook({ feedType });
 
-  const { mutate: commentPost, isPending: isCommenting } = useMutation({
-    mutationFn: async () => {},
-    onSuccess: () => {
-      toast.success("Comment posted successfully");
-      setComment("");
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  const { mutate: commentPost, isPending: isCommenting } = useCommentHook();
 
   const handleDeletePost = () => {
     deletePost();
   };
 
-  const handlePostComment = (e: React.SubmitEvent) => {
+  const handlePostComment = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!comment.trim()) {
+      return toast.error("Comment cannot be empty");
+    }
+
     if (isCommenting) return;
-    commentPost();
+
+    commentPost(
+      { userComment: comment, postId: post._id },
+      {
+        onSuccess: () => {
+          setComment(""); // ✅ clear input
+        },
+      },
+    );
   };
 
   const handleLikePost = (postId: string) => {
@@ -104,9 +108,9 @@ const Post = ({ post }: { post: any }) => {
           </div>
           <div className="flex flex-col gap-3 overflow-hidden">
             <span>{post.text}</span>
-            {post.img && (
+            {post.image && (
               <img
-                src={post.img}
+                src={post.image}
                 className="h-80 object-contain rounded-lg border border-gray-700"
                 alt=""
               />
@@ -116,13 +120,15 @@ const Post = ({ post }: { post: any }) => {
             <div className="flex gap-4 items-center w-2/3 justify-between">
               <div
                 className="flex gap-1 items-center cursor-pointer group"
-                // onClick={() =>
-                //   document
-                //     .getElementById("comments_modal" + post._id)
-                //     .showModal()
-                // }
+                onClick={() => {
+                  const modal = document.getElementById(
+                    `comments_modal${post._id}`,
+                  ) as HTMLDialogElement;
+
+                  modal?.showModal();
+                }}
               >
-                <FaRegComment className="w-4 h-4  text-slate-500 group-hover:text-sky-400" />
+                <FaRegComment className="w-4 h-4 text-slate-500 group-hover:text-sky-400" />
                 <span className="text-sm text-slate-500 group-hover:text-sky-400">
                   {post.comments.length}
                 </span>

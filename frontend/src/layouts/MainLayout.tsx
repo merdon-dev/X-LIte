@@ -9,7 +9,8 @@ import LoadingSpinner from "../components/skeletons/LoadingSpinner";
 import { useAuthHook } from "../hooks/useAuthHook";
 
 export default function MainLayout() {
-  const { data, error, isError, isPending } = useAuthHook();
+  const { data: authUser, error, isError, isPending } = useAuthHook();
+  console.log({ authUser });
 
   useEffect(() => {
     if (isError) {
@@ -33,9 +34,9 @@ export default function MainLayout() {
       {/* <Navbar /> */}
       <Sidebar />
       <main className="flex-1">
-        {data ? <Outlet /> : <Navigate to="/login" />}
+        {authUser ? <Outlet /> : <Navigate to="/login" />}
       </main>
-      {data ? <RightPanel /> : null}
+      {authUser ? <RightPanel /> : null}
     </div>
   );
 }
