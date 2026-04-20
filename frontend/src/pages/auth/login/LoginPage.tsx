@@ -4,59 +4,56 @@ import { Link } from "react-router-dom";
 import { MdOutlineMail } from "react-icons/md";
 import { MdPassword } from "react-icons/md";
 import XSvg from "../../../components/svgs/Xsvg";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import {
+  axiosInstance,
+  type ApiErrorResponse,
+} from "../../../services/axiosInstance";
+import type { AxiosError } from "axios";
+import type { FormPayload } from "../../../types/auth.signin.types";
 
 const LoginPage = () => {
-  const [formData, setFormData] = useState({
-    username: "",
+  const [formData, setFormData] = useState<FormPayload>({
+    userName: "",
     password: "",
   });
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-  // const {
-  // 	mutate: loginMutation,
-  // 	isPending,
-  // 	isError,
-  // 	error,
-  // } = useMutation({
-  // 	mutationFn: async ({ username, password }) => {
-  // 		try {
-  // 			const res = await fetch("/api/auth/login", {
-  // 				method: "POST",
-  // 				headers: {
-  // 					"Content-Type": "application/json",
-  // 				},
-  // 				body: JSON.stringify({ username, password }),
-  // 			});
+  const {
+    mutate: login,
+    isError,
+    isPending,
+    error,
+  } = useMutation({
+    mutationFn: async ({ formData }: { formData: FormPayload }) => {
+      const res = await axiosInstance.post("/auth/sign-in", formData);
+      return res.data;
+    },
 
-  // 			const data = await res.json();
-
-  // 			if (!res.ok) {
-  // 				throw new Error(data.error || "Something went wrong");
-  // 			}
-  // 		} catch (error) {
-  // 			throw new Error(error);
-  // 		}
-  // 	},
-  // 	onSuccess: () => {
-  // 		// refetch the authUser
-  // 		queryClient.invalidateQueries({ queryKey: ["authUser"] });
-  // 	},
-  // });
+    onSuccess: (data) => {
+      console.log({ userData: data });
+      toast.success(data.message);
+      queryClient.invalidateQueries({
+        queryKey: ["authUser"],
+      });
+    },
+    onError: (error: AxiosError<ApiErrorResponse>) => {
+      const message = error?.message || "Something went wrong";
+      toast.error(message);
+    },
+  });
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formData);
 
-    // loginMutation(formData);
+    login({ formData });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
-  const isPending = false;
-  const isError = false;
-  const error = {};
 
   return (
     <div className="max-w-7xl mx-auto flex h-screen">
@@ -72,10 +69,10 @@ const LoginPage = () => {
             <input
               type="text"
               className="grow"
-              placeholder="username"
-              name="username"
+              placeholder="userName"
+              name="userName"
               onChange={handleInputChange}
-              value={formData.username}
+              value={formData.userName}
             />
           </label>
 

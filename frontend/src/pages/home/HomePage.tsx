@@ -1,6 +1,6 @@
 import { useState } from "react";
 import CreatePost from "../post/CreatePost";
-import Posts from "../../components/shared/Posts";
+import Posts from "../post/Posts";
 
 // import Posts from "../../components/common/Posts";
 // import CreatePost from "./CreatePost";

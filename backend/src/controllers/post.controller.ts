@@ -38,7 +38,7 @@ export const createPost = async (
       return res.status(201).json({
         success: true,
         message: "Post created Successfully",
-        post: newPost,
+        data: newPost,
       });
     }
   } catch (error) {
@@ -141,7 +141,7 @@ export const getPostById = async (
     return res.status(200).json({
       success: true,
       message: "Post Fetched Successfully",
-      post: post,
+      data: post,
     });
   } catch (error) {
     next(error);
@@ -217,7 +217,7 @@ export const editPostById = async (
     return res.status(200).json({
       success: true,
       message: "Post Updated Successfully",
-      post: updatedPost,
+      data: updatedPost,
     });
   } catch (error) {
     next(error);
@@ -294,7 +294,7 @@ export const likePostById = async (
     return res.status(200).json({
       success: true,
       message: `Post ${isAlreadyLiked ? "Un-Liked" : "Liked"} Successfully`,
-      post: updatedPost,
+      data: updatedPost,
     });
   } catch (error) {
     next(error);
@@ -374,7 +374,7 @@ export const commentPostById = async (
     return res.status(201).json({
       success: true,
       message: "Post commented successfully",
-      comment: latestComment,
+      data: latestComment,
       totalComments: updatedPost?.comments.length,
     });
   } catch (error) {
@@ -546,7 +546,7 @@ export const deletePostCommentById = async (
     return res.status(200).json({
       success: true,
       message: "Comment deleted successfully",
-      post: updatedPost,
+      data: updatedPost,
     });
   } catch (error) {
     next(error);
@@ -616,7 +616,7 @@ export const getFollowingUsersPost = async (
       return res.status(200).json({
         success: true,
         message: "No following users",
-        posts: [],
+        data: [],
       });
     }
 
@@ -640,7 +640,7 @@ export const getFollowingUsersPost = async (
     return res.status(200).json({
       success: true,
       message: "Following users' posts fetched successfully",
-      posts: followingUsersPost,
+      data: followingUsersPost,
       meta,
     });
   } catch (error) {
@@ -678,7 +678,7 @@ export const getPostByUserName = async (
     return res.status(200).json({
       success: true,
       message: "Posts fetched successfully",
-      posts: postByUser,
+      data: postByUser,
     });
   } catch (error) {
     console.log(`error in get posts by username ${error}`);

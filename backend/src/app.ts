@@ -5,6 +5,7 @@ import express, {
 } from "express";
 const app = express();
 import {
+  ALLOWED_PATHS,
   CLOUDNARY_API_KEY,
   CLOUDNARY_API_SECRET,
   CLOUDNARY_CLOUD_NAME,
@@ -17,6 +18,7 @@ import userRouter from "./routes/user.routes.js";
 import postRouter from "./routes/post.route.js";
 import notificationRouter from "./routes/notification.route.js";
 import cloudinary from "cloudinary";
+import cors from "cors";
 
 app.use(express.json());
 app.use(cookieParser());
@@ -27,17 +29,24 @@ cloudinary.v2.config({
   api_secret: CLOUDNARY_API_SECRET as string,
 });
 
+app.use(
+  cors({
+    origin: ALLOWED_PATHS,
+    credentials: true,
+  }),
+);
+
 app.get("/check", (req, res) => {
   res.send("NEW SERVER WORKING");
 });
 
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1", userRouter);
+app.use("/api/v1/profile", userRouter);
 app.use("/api/v1/post", postRouter);
 app.use("/api/v1/notification", notificationRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  res.status(err.status || 500).json({
+  res.status(err.statusCode || 500).json({
     success: false,
     message: err.message || "Internal Server Error",
   });

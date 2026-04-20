@@ -8,8 +8,12 @@ import { MdDriveFileRenameOutline } from "react-icons/md";
 import XSvg from "../../../components/svgs/Xsvg";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { axiosInstance } from "../../../services/axiosInstance";
+import {
+  axiosInstance,
+  type ApiErrorResponse,
+} from "../../../services/axiosInstance";
 import type { FormPayload } from "../../../types/auth.signup.types";
+import type { AxiosError } from "axios";
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState<FormPayload>({
@@ -21,36 +25,6 @@ const SignUpPage = () => {
 
   // const queryClient = useQueryClient();
 
-  // const { mutate, isError, isPending, error } = useMutation({
-  // 	mutationFn: async ({ email, userName, fullName, password }) => {
-  // 		try {
-  // 			const res = await fetch("/api/auth/signup", {
-  // 				method: "POST",
-  // 				headers: {
-  // 					"Content-Type": "application/json",
-  // 				},
-  // 				body: JSON.stringify({ email, userName, fullName, password }),
-  // 			});
-
-  // 			const data = await res.json();
-  // 			if (!res.ok) throw new Error(data.error || "Failed to create account");
-  // 			console.log(data);
-  // 			return data;
-  // 		} catch (error) {
-  // 			console.error(error);
-  // 			throw error;
-  // 		}
-  // 	},
-  // 	onSuccess: () => {
-  // 		toast.success("Account created successfully");
-
-  // 		{
-  // 			/* Added this line below, after recording the video. I forgot to add this while recording, sorry, thx. */
-  // 		}
-  // 		queryClient.invalidateQueries({ queryKey: ["authUser"] });
-  // 	},
-  // });
-
   const {
     mutate: signUp,
     isPending,
@@ -58,15 +32,19 @@ const SignUpPage = () => {
     error,
   } = useMutation({
     mutationFn: async ({ formData }: { formData: FormPayload }) => {
-      try {
-        const payload = JSON.stringify(formData);
-        const { data } = await axiosInstance.post("auth/sign-up", payload);
-        console.log({ data });
-      } catch (error: any) {
-        console.log(error);
+      const { data } = await axiosInstance.post("auth/sign-up", formData);
+      return data;
+    },
 
-        toast.error(error.message);
-      }
+    onError: (error: AxiosError<ApiErrorResponse>) => {
+      const message = error.response?.data?.message || "Something went wrong";
+
+      toast.error(message);
+    },
+
+    onSuccess: (data) => {
+      toast.success(data.message);
+      console.log("User:", data.data);
     },
   });
 

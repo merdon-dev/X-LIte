@@ -2,43 +2,33 @@ import { Link } from "react-router-dom";
 
 import LoadingSpinner from "../skeletons/LoadingSpinner";
 import RightPanelSkeleton from "../skeletons/RightPanelSkeleton";
+import { useQuery } from "@tanstack/react-query";
+import { axiosInstance } from "../../services/axiosInstance";
+import type { UserType } from "../../types/user.types";
+import { useFollowHook } from "../../hooks/useFollowHook";
 
 const RightPanel = () => {
-  // const { data: suggestedUsers, isLoading } = useQuery({
-  // 	queryKey: ["suggestedUsers"],
-  // 	queryFn: async () => {
-  // 		try {
-  // 			const res = await fetch("/api/users/suggested");
-  // 			const data = await res.json();
-  // 			if (!res.ok) {
-  // 				throw new Error(data.error || "Something went wrong!");
-  // 			}
-  // 			return data;
-  // 		} catch (error) {
-  // 			throw new Error(error.message);
-  // 		}
-  // 	},
-  // });
+  const { mutate: followUnfollow, isPending } = useFollowHook();
 
-  // const { follow, isPending } = useFollow();
-
-  // if (suggestedUsers?.length === 0) return <div className='md:w-64 w-0'></div>;
-
-  const isLoading = false;
-
-  const suggestedUsers = [
-    {
-      _id: "1",
-      username: "user1",
-      profileImg: "/avatar-placeholder.png",
+  const {
+    data: suggestedQueryRes,
+    error,
+    isError,
+    isLoading,
+  } = useQuery({
+    queryKey: ["suggestedUsers"],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get("profile/suggested-users");
+      return data;
     },
-    {
-      _id: "2",
-      username: "user2",
-      profileImg: "/avatar-placeholder.png",
-    },
-  ];
-  const isPending = false;
+    retry: false,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  console.log({ suggestedQueryRes, error, isPending, isError, isLoading });
+  const suggestedUsers = suggestedQueryRes?.data;
+  if (suggestedUsers?.length === 0)
+    return <div className="md:w-64 w-0">No Suggested Users Found</div>;
 
   return (
     <div className="hidden lg:block my-4 mx-2">
@@ -55,16 +45,18 @@ const RightPanel = () => {
             </>
           )}
           {!isLoading &&
-            suggestedUsers?.map((user) => (
+            suggestedUsers?.map((user: UserType) => (
               <Link
-                to={`/profile/${user.username}`}
+                to={`/profile/${user.userName}`}
                 className="flex items-center justify-between gap-4"
                 key={user._id}
               >
                 <div className="flex gap-2 items-center">
                   <div className="avatar">
                     <div className="w-8 rounded-full">
-                      <img src={user.profileImg || "/avatar-placeholder.png"} />
+                      <img
+                        src={user.profileImage || "/avatar-placeholder.png"}
+                      />
                     </div>
                   </div>
                   <div className="flex flex-col">
@@ -72,7 +64,7 @@ const RightPanel = () => {
                       {user.fullName}
                     </span>
                     <span className="text-sm text-slate-500">
-                      @{user.username}
+                      @{user.userName}
                     </span>
                   </div>
                 </div>
@@ -81,7 +73,7 @@ const RightPanel = () => {
                     className="btn bg-white text-black hover:bg-white hover:opacity-90 rounded-full btn-sm"
                     onClick={(e) => {
                       e.preventDefault();
-                      follow(user._id);
+                      followUnfollow(user._id);
                     }}
                   >
                     {isPending ? <LoadingSpinner size="sm" /> : "Follow"}

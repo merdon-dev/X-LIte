@@ -119,10 +119,9 @@ export const getSuggestedUsers = async (
   next: NextFunction,
 ) => {
   try {
-    if (!req.user) {
+    if (!req?.user) {
       return next(new AppError("User not found", 404));
     }
-
     const userId = req.user._id;
 
     const usersFollowedByMe = await User.findById(userId);
@@ -148,12 +147,12 @@ export const getSuggestedUsers = async (
       return next(new AppError("No suggested users found", 404));
     }
 
-    suggestedUsers.slice(0, 4);
+    const slicedUsers = suggestedUsers.slice(0, 4);
 
     res.json({
       success: true,
       message: "Get suggested users successfully",
-      data: suggestedUsers,
+      data: slicedUsers,
     });
   } catch (error) {
     next(error);

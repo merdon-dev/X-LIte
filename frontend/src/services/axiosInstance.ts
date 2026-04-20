@@ -1,8 +1,20 @@
-import axios from "axios";
+export interface ApiSuccessResponse<T> {
+  success: true;
+  message: string;
+  data: T;
+}
+
+export interface ApiErrorResponse {
+  success: false;
+  message: string;
+}
+
+import axios, { AxiosError } from "axios";
 import { BASE_URL } from "./apiHelperUrls";
 
 console.log("ENV:", import.meta.env);
 console.log("BASE_URL:", BASE_URL);
+
 export const axiosInstance = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
@@ -22,7 +34,7 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response) => response,
-  (error) => {
+  (error: AxiosError<ApiErrorResponse>) => {
     console.log({ error });
     if (error.response?.status === 401) {
       console.error("Not authenticated");
@@ -32,9 +44,9 @@ axiosInstance.interceptors.response.use(
     }
 
     return Promise.reject({
-      message: (error.response?.data as any)?.message ?? error.message,
       status: error.response?.status,
-      data: error.response?.data,
+      message: (error.response?.data as any)?.message ?? error.message,
+      // data: error.response?.data,
     });
   },
 );
