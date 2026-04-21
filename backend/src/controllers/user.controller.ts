@@ -172,6 +172,7 @@ export const updateUserProfile = async (
       newPassword,
       password: existingPassword,
       bio,
+      link,
     } = req.body;
     let { profileImage, coverImage } = req.body;
 
@@ -278,6 +279,7 @@ export const updateUserProfile = async (
     user.bio = bio || user.bio;
     user.profileImage = profileImage || user.profileImage;
     user.coverImage = coverImage || user.coverImage;
+    user.link = link || user.link;
 
     await user.save();
 

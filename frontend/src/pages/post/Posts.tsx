@@ -1,11 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import PostSkeleton from "../../components/skeletons/PostSkeleton";
-import {
-  axiosInstance,
-  type ApiSuccessResponse,
-} from "../../services/axiosInstance";
 import Post from "./Post";
 import type { PostType } from "../../types/post.types";
+import { usePostHook } from "../../hooks/usePostHook";
 
 const Posts = ({
   feedType,
@@ -37,20 +33,7 @@ const Posts = ({
     data: posts,
     isLoading,
     isRefetching,
-  } = useQuery({
-    queryKey: ["posts", "list", feedType || userName || userId],
-    queryFn: async () => {
-      const { data } =
-        await axiosInstance.get<ApiSuccessResponse<any>>(POST_ENDPOINT);
-      console.log({ data });
-
-      return data?.data;
-    },
-    retry: false,
-    staleTime: 1000 * 60 * 1,
-  });
-
-  console.log({ posts });
+  } = usePostHook({ feedType, endPoint: POST_ENDPOINT, userId, userName });
 
   return (
     <>

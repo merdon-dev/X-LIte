@@ -4,6 +4,8 @@ import AuthLayout from "../layouts/AuthLayout";
 import HomePage from "../pages/home/HomePage";
 import LoginPage from "../pages/auth/login/LoginPage";
 import SignUpPage from "../pages/auth/signUp/SignUpPage";
+import ProfilePage from "../pages/profile/ProfilePage";
+import NotificationPage from "../pages/notification/Notification";
 
 export const router = createBrowserRouter([
   {
@@ -13,10 +15,14 @@ export const router = createBrowserRouter([
         path: "/",
         element: <HomePage />,
       },
-      //   {
-      //     path: "/about",
-      //     element: <AboutPage />,
-      //   },
+      {
+        path: "/profile/:userName",
+        element: <ProfilePage />,
+      },
+      {
+        path: "/notifications",
+        element: <NotificationPage />,
+      },
     ],
   },
   {

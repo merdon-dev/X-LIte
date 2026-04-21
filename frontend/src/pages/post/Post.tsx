@@ -5,45 +5,42 @@ import { FaRegBookmark } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import LoadingSpinner from "../../components/skeletons/LoadingSpinner";
-import { axiosInstance } from "../../services/axiosInstance";
 import { useAuthHook } from "../../hooks/useAuthHook";
 import { useLikeHook } from "../../hooks/useLlikeHook";
 import { useCommentHook } from "../../hooks/useCommentHook";
+import type { LikeType } from "../../types/post.types";
+import { useDeleteHook } from "../../hooks/useDeleteHook";
 
 const Post = ({ post, feedType }: { post: any; feedType?: string }) => {
   const [comment, setComment] = useState("");
   const { data: authUser } = useAuthHook();
-  const queryClient = useQueryClient();
   const postOwner = post.userId;
   console.log({ authUser, post });
 
-  const isLiked = !!authUser && post.likes.includes(authUser._id);
+  const isLiked =
+    !!authUser &&
+    post.likes.some((like: LikeType) => like.userId === authUser._id);
+  console.log({ authUser, post });
 
   const isMyPost = !!authUser && authUser._id === post.userId._id;
 
   //   const formattedDate = formatPostDate(post.createdAt);
   const formattedDate = post.createdAt;
 
-  const { mutate: deletePost, isPending: isDeleting } = useMutation({
-    mutationFn: async () => {
-      const res = await axiosInstance.delete(`post/delete/${post._id}`);
-    },
-
-    onSuccess: () => {
-      toast.success("Post deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
-    },
+  const { mutate: deletePost, isPending: isDeleting } = useDeleteHook({
+    feedType,
   });
 
   const { mutate: likePost, isPending: isLiking } = useLikeHook({ feedType });
 
-  const { mutate: commentPost, isPending: isCommenting } = useCommentHook();
+  const { mutate: commentPost, isPending: isCommenting } = useCommentHook({
+    feedType,
+  });
 
-  const handleDeletePost = () => {
-    deletePost();
+  const handleDeletePost = (postId: string) => {
+    deletePost({ postId });
   };
 
   const handlePostComment = (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -59,7 +56,12 @@ const Post = ({ post, feedType }: { post: any; feedType?: string }) => {
       { userComment: comment, postId: post._id },
       {
         onSuccess: () => {
-          setComment(""); // ✅ clear input
+          setComment("");
+          const modal = document.getElementById(
+            `comments_modal${post._id}`,
+          ) as HTMLDialogElement;
+
+          modal?.close();
         },
       },
     );
@@ -98,7 +100,7 @@ const Post = ({ post, feedType }: { post: any; feedType?: string }) => {
                 {!isDeleting && (
                   <FaTrash
                     className="cursor-pointer hover:text-red-500"
-                    onClick={handleDeletePost}
+                    onClick={() => handleDeletePost(post._id)}
                   />
                 )}
 
@@ -152,7 +154,7 @@ const Post = ({ post, feedType }: { post: any; feedType?: string }) => {
                           <div className="w-8 rounded-full">
                             <img
                               src={
-                                comment.userId.profileImg ||
+                                comment.userId.profileImage ||
                                 "/avatar-placeholder.png"
                               }
                             />
@@ -167,7 +169,7 @@ const Post = ({ post, feedType }: { post: any; feedType?: string }) => {
                               @{comment.userId.username}
                             </span>
                           </div>
-                          <div className="text-sm">{comment.text}</div>
+                          <div className="text-sm">{comment.comment}</div>
                         </div>
                       </div>
                     ))}
@@ -206,7 +208,7 @@ const Post = ({ post, feedType }: { post: any; feedType?: string }) => {
                   <FaRegHeart className="w-4 h-4 cursor-pointer text-slate-500 group-hover:text-pink-500" />
                 )}
                 {isLiked && !isLiking && (
-                  <FaRegHeart className="w-4 h-4 cursor-pointer text-pink-500 " />
+                  <FaRegHeart className="w-4 h-4 cursor-pointer text-pink-500" />
                 )}
 
                 <span

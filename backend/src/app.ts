@@ -9,6 +9,7 @@ import {
   CLOUDNARY_API_KEY,
   CLOUDNARY_API_SECRET,
   CLOUDNARY_CLOUD_NAME,
+  NODE_ENV,
   PORT,
 } from "./config/env.js";
 import { connectDB } from "./db/connectDB.js";
@@ -19,9 +20,12 @@ import postRouter from "./routes/post.route.js";
 import notificationRouter from "./routes/notification.route.js";
 import cloudinary from "cloudinary";
 import cors from "cors";
+import path from "path";
 
 app.use(express.json());
 app.use(cookieParser());
+
+const __dirname = path.resolve();
 
 cloudinary.v2.config({
   cloud_name: CLOUDNARY_CLOUD_NAME as string,
@@ -51,6 +55,10 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     message: err.message || "Internal Server Error",
   });
 });
+
+if (NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/frontend/build")));
+}
 
 connectDB().then(() => {
   app.listen(PORT, () => {
