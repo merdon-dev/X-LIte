@@ -11,7 +11,6 @@ const generateToken = async ({
   res: Response;
 }) => {
   try {
-    console.log(userId);
     const token = jwt.sign({ userId }, JWT_SECRET as string, {
       expiresIn: "15d",
     });

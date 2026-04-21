@@ -1,0 +1,17 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@plugin "daisyui/theme" {
+  name: "black";
+  default: true;
+
+  /* your overrides */
+  --p: 204 86% 53%; /* primary (blue) */
+  --s: 0 0% 9%; /* secondary (dark) */
+
+  /* keep base dark feel */
+  --b1: 0 0% 0%; /* background */
+  --b2: 0 0% 5%;
+  --b3: 0 0% 10%;
+  --bc: 0 0% 95%; /* text */
+}

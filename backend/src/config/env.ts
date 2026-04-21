@@ -14,6 +14,8 @@ export const {
   CLOUDNARY_API_SECRET,
 } = process.env;
 
+export const ALLOWED_PATHS = ["http://localhost:3000", "http://localhost:3001"];
+
 export default {
   PORT,
   MONGO_URI,
@@ -22,4 +24,5 @@ export default {
   CLOUDNARY_CLOUD_NAME,
   CLOUDNARY_API_KEY,
   CLOUDNARY_API_SECRET,
+  ALLOWED_PATHS,
 };

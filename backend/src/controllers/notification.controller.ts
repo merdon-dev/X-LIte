@@ -12,9 +12,11 @@ export const getAllNotifications = async (
     if (!userId) {
       return next(new AppError("User is not found", 404));
     }
-    const notifications = await Notification.find({ to: userId });
+    const notifications = await Notification.find({ to: userId }).populate({
+      path: "from",
+      select: ["userName", "fullName", "_id"],
+    });
     await Notification.updateMany({ user: userId }, { read: true });
-
     return res.status(200).json({
       success: true,
       message: "Notifications fetched successfully",
