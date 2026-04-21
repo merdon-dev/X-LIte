@@ -65,7 +65,7 @@ const NotificationPage = () => {
             <IoSettingsOutline className="w-4" />
           </div>
 
-          <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+          <ul className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
             <li>
               <button onClick={() => deleteNotifications()}>
                 {isPending ? "Deleting..." : "Delete all notifications"}

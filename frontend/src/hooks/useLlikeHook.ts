@@ -25,8 +25,6 @@ export const useLikeHook = ({ feedType }: { feedType?: string }) => {
       queryClient.setQueryData(
         ["posts", "list", feedType],
         (oldData: PostType[]) => {
-          console.log({ oldData, likes });
-
           if (!oldData) return oldData;
 
           return oldData.map((p: PostType) =>

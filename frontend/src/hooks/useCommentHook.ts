@@ -16,7 +16,6 @@ export const useCommentHook = ({ feedType }: { feedType?: string }) => {
       const { data } = await axiosInstance.post(`post/comment/${postId}`, {
         userComment: userComment.trim(),
       });
-      console.log({ data });
 
       return { postId, comment: data.data };
     },
@@ -30,8 +29,6 @@ export const useCommentHook = ({ feedType }: { feedType?: string }) => {
       queryClient.setQueryData(
         ["posts", "list", feedType],
         (existingPosts: PostType[]) => {
-          console.log({ existingPosts });
-
           if (!existingPosts) return existingPosts;
 
           return existingPosts.map((p: PostType) =>

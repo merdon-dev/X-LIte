@@ -44,13 +44,11 @@ const SignUpPage = () => {
 
     onSuccess: (data) => {
       toast.success(data.message);
-      console.log("User:", data.data);
     },
   });
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
     signUp({ formData });
 
     // mutate(formData);

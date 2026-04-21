@@ -76,7 +76,6 @@ export const getAllPosts = async (
           "-coverImage",
         ],
       });
-    console.log({ allPosts });
     if (allPosts.length === 0) {
       return res.status(200).json({
         success: true,
@@ -244,7 +243,6 @@ export const likePostById = async (
 
     const postCreator = await User.findById(post.userId);
 
-    console.log(post.likes);
     const isAlreadyLiked = post.likes.some((like) => {
       return like.userId && like.userId.toString() === userId?.toString();
     });
@@ -565,7 +563,6 @@ export const getLikedPosts = async (
     if (!user) {
       return next(new AppError("User Not Found", 404));
     }
-    console.log({ user });
 
     const likedPosts = await PostDb.find({ _id: { $in: user.likedPosts } })
       .sort({ createdAt: -1 })
@@ -580,7 +577,6 @@ export const getLikedPosts = async (
           "-coverImage",
         ],
       });
-    console.log(likedPosts);
 
     return res.status(200).json({
       success: true,
@@ -588,7 +584,6 @@ export const getLikedPosts = async (
       data: likedPosts,
     });
   } catch (error) {
-    console.log(`error in get liked posts ${error}`);
     next(error);
   }
 };
@@ -644,7 +639,6 @@ export const getFollowingUsersPost = async (
       meta,
     });
   } catch (error) {
-    console.log(`error in get following user's posts ${error}`);
     next(error);
   }
 };
@@ -681,7 +675,6 @@ export const getPostByUserName = async (
       data: postByUser,
     });
   } catch (error) {
-    console.log(`error in get posts by username ${error}`);
     next(error);
   }
 };

@@ -10,7 +10,6 @@ import { useAuthHook } from "../hooks/useAuthHook";
 
 export default function MainLayout() {
   const { data: authUser, error, isError, isPending } = useAuthHook();
-  console.log({ authUser });
 
   useEffect(() => {
     if (isError) {

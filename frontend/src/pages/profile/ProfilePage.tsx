@@ -37,7 +37,6 @@ const ProfilePage = () => {
   const queryClient = useQueryClient();
 
   const postList = queryClient.getQueryData(["posts", "list", "posts"]);
-  console.log(postList);
 
   const { updateProfile, isUpdatingProfile } = useUpdateUserProfile();
   const { mutate: follow, isPending } = useFollowHook();
@@ -68,8 +67,6 @@ const ProfilePage = () => {
     };
     reader.readAsDataURL(file);
   };
-
-  console.log({ user });
 
   return (
     <div className="flex-[4_4_0] border-r border-gray-700 min-h-screen">

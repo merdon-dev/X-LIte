@@ -95,8 +95,6 @@ export const SignIn = async (req: Request, res: Response) => {
       data: safeUser,
     });
   } catch (error) {
-    console.log(`error in sign in${error}`);
-
     res.status(500).json({
       success: false,
       message: serverErrorMsg(),
@@ -112,8 +110,6 @@ export const SignOut = async (req: Request, res: Response) => {
       message: "Sign out successfully",
     });
   } catch (error) {
-    console.log(`error in sign out ${error}`);
-
     res.status(500).json({
       success: false,
       message: serverErrorMsg(),
@@ -131,8 +127,6 @@ export const GetUser = async (req: Request, res: Response) => {
       data: user,
     });
   } catch (error) {
-    console.log(`error in sign out ${error}`);
-
     res.status(500).json({
       success: false,
       message: serverErrorMsg(),

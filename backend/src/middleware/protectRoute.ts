@@ -43,8 +43,6 @@ const protectRoute = async (
 
     next();
   } catch (error) {
-    console.log(`error in protectRoute ${error}`);
-
     next(new AppError("Unauthorized", 401));
   }
 };

@@ -57,7 +57,10 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 });
 
 if (NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "/frontend/build")));
+  app.use(express.static(path.join(__dirname, "/frontend/dist")));
+  app.use("*", (req: Request, res: Response) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+  });
 }
 
 connectDB().then(() => {

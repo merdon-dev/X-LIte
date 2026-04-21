@@ -40,10 +40,6 @@ const Sidebar = () => {
     },
   });
 
-  useEffect(() => {
-    console.log({ authUser });
-  }, [authUser]);
-
   if (!authUser) {
     return null;
   }

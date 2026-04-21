@@ -25,7 +25,6 @@ const RightPanel = () => {
     staleTime: 1000 * 60 * 5,
   });
 
-  console.log({ suggestedQueryRes, error, isPending, isError, isLoading });
   const suggestedUsers = suggestedQueryRes?.data;
   if (suggestedUsers?.length === 0)
     return <div className="md:w-64 w-0">No Suggested Users Found</div>;

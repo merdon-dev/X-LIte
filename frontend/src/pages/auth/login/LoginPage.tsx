@@ -32,7 +32,6 @@ const LoginPage = () => {
     },
 
     onSuccess: (data) => {
-      console.log({ userData: data });
       toast.success(data.message);
       queryClient.invalidateQueries({
         queryKey: ["authUser"],
@@ -46,7 +45,6 @@ const LoginPage = () => {
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
 
     login({ formData });
   };

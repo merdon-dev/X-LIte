@@ -21,7 +21,6 @@ export const usePostHook = ({
     queryFn: async () => {
       const { data } =
         await axiosInstance.get<ApiSuccessResponse<PostType[]>>(endPoint);
-      console.log({ data });
 
       return data?.data;
     },
