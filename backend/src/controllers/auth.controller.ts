@@ -1,32 +1,41 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import generateToken from "../utils/generateToken.js";
 import { serverErrorMsg } from "../services/helper.js";
+import AppError from "../utils/AppError.js";
 
-export const SignUp = async (req: Request, res: Response) => {
+export const SignUp = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { userName, fullName, email, password } = req.body;
+
+    if (!userName || !fullName || !email || !password) {
+      return next(new AppError("All fields are required", 400));
+    }
 
     const emailRegex = /^\S+@\S+\.\S+$/;
 
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: "Invalid email format" });
+      return res.status(422).json({ message: "Invalid email format" });
     }
 
     const existingEmail = await User.findOne({ email });
     if (existingEmail) {
-      return res.status(400).json({ message: "Email already exists" });
+      return res.status(409).json({ message: "Email already exists" });
     }
 
     const existingUserName = await User.findOne({ userName });
     if (existingUserName) {
-      return res.status(400).json({ message: "Username already exists" });
+      return res.status(409).json({ message: "Username already exists" });
     }
 
     if (password.length < 6) {
       return res
-        .status(400)
+        .status(422)
         .json({ message: "Password must be at least 6 characters" });
     }
 
@@ -46,6 +55,7 @@ export const SignUp = async (req: Request, res: Response) => {
 
     res.status(201).json({
       success: true,
+      message: "User Created Successfully",
       data: savedUser,
     });
   } catch (error) {
@@ -79,13 +89,12 @@ export const SignIn = async (req: Request, res: Response) => {
 
     const { password: _, ...safeUser } = userObj;
 
-    res.json({
+    res.status(200).json({
       success: true,
+      message: "Logged in Successfully",
       data: safeUser,
     });
   } catch (error) {
-    console.log(`error in sign in${error}`);
-
     res.status(500).json({
       success: false,
       message: serverErrorMsg(),
@@ -101,8 +110,6 @@ export const SignOut = async (req: Request, res: Response) => {
       message: "Sign out successfully",
     });
   } catch (error) {
-    console.log(`error in sign out ${error}`);
-
     res.status(500).json({
       success: false,
       message: serverErrorMsg(),
@@ -120,8 +127,6 @@ export const GetUser = async (req: Request, res: Response) => {
       data: user,
     });
   } catch (error) {
-    console.log(`error in sign out ${error}`);
-
     res.status(500).json({
       success: false,
       message: serverErrorMsg(),
