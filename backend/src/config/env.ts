@@ -1,10 +1,6 @@
 import { config } from "dotenv";
 
-if (process.env.NODE_ENV !== "production") {
-  config({
-    path: "./src/config/env/.env.development",
-  });
-}
+config();
 
 export const {
   MONGO_URI,
@@ -16,8 +12,12 @@ export const {
 
 export const ALLOWED_PATHS =
   process.env.NODE_ENV === "production"
-    ? true
-    : ["http://localhost:3000", "http://localhost:3001"];
+    ? ["https://your-frontend.vercel.app"]
+    : [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://localhost:3001",
+      ];
 
 export default {
   MONGO_URI,
