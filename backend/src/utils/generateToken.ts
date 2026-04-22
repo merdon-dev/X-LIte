@@ -13,13 +13,13 @@ const generateToken = async ({
   const NODE_ENV = process.env.NODE_ENV;
   try {
     const token = jwt.sign({ userId }, JWT_SECRET as string, {
-      expiresIn: "15d",
+      expiresIn: "1d",
     });
 
     res.cookie("jwt", token, {
       httpOnly: true,
-      sameSite: "strict",
-      maxAge: 15 * 24 * 60 * 1000,
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000,
       secure: NODE_ENV === "production",
     });
   } catch (error) {
