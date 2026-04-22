@@ -1,7 +1,7 @@
 import type { Response } from "express";
 import { serverErrorMsg } from "../services/helper.js";
 import jwt from "jsonwebtoken";
-import { JWT_SECRET, NODE_ENV } from "../config/env.js";
+import { JWT_SECRET } from "../config/env.js";
 
 const generateToken = async ({
   userId,
@@ -10,6 +10,7 @@ const generateToken = async ({
   userId: string;
   res: Response;
 }) => {
+  const NODE_ENV = process.env.NODE_ENV;
   try {
     const token = jwt.sign({ userId }, JWT_SECRET as string, {
       expiresIn: "15d",
