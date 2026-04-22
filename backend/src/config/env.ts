@@ -12,7 +12,7 @@ export const {
 
 export const ALLOWED_PATHS =
   process.env.NODE_ENV === "production"
-    ? ["https://x-l-ite.vercel.app/"]
+    ? ["https://x-l-ite.vercel.app"]
     : [
         "http://localhost:5173",
         "http://localhost:3000",
