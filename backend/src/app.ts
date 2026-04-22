@@ -25,7 +25,7 @@ import path from "path";
 app.use(express.json());
 app.use(cookieParser());
 
-const __dirname = path.resolve();
+const port = process.env.PORT || PORT || 5000;
 
 cloudinary.v2.config({
   cloud_name: CLOUDNARY_CLOUD_NAME as string,
@@ -33,9 +33,15 @@ cloudinary.v2.config({
   api_secret: CLOUDNARY_API_SECRET as string,
 });
 
+// app.use(
+//   cors({
+//     origin: ALLOWED_PATHS,
+//     credentials: true,
+//   }),
+// );
 app.use(
   cors({
-    origin: ALLOWED_PATHS,
+    origin: true,
     credentials: true,
   }),
 );
@@ -57,14 +63,15 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 });
 
 if (NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "/frontend/dist")));
-  app.use("*", (req: Request, res: Response) => {
-    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+  app.use(express.static(path.join(process.cwd(), "frontend/dist")));
+
+  app.get("*", (req: Request, res: Response) => {
+    res.sendFile(path.join(process.cwd(), "frontend/dist/index.html"));
   });
 }
 
 connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is running on port http://localhost:${PORT}`);
+  app.listen(port, () => {
+    console.log(`Server is running on port http://localhost:${port}`);
   });
 });
