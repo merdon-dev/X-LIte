@@ -25,7 +25,13 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ALLOWED_PATHS,
+    origin: function (origin, callback) {
+      if (!origin || ALLOWED_PATHS.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   }),
 );
