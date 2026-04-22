@@ -1,12 +1,9 @@
 {
-  "name": "X like social app",
+  "name": "x-lite-root",
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
-    "build": "npm run build --prefix frontend && npm run build --prefix backend",
-    "build:production": "npm ci --prefix frontend && npm ci --prefix backend && npm run build --prefix frontend && npm run build --prefix backend",
-    "start": "node backend/dist/app.js"
+    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\""
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
