@@ -9,8 +9,6 @@ import {
   CLOUDNARY_API_KEY,
   CLOUDNARY_API_SECRET,
   CLOUDNARY_CLOUD_NAME,
-  NODE_ENV,
-  PORT,
 } from "./config/env.js";
 import { connectDB } from "./db/connectDB.js";
 import authRouter from "./routes/auth.routes.js";
@@ -25,7 +23,7 @@ import path from "path";
 app.use(express.json());
 app.use(cookieParser());
 
-const port = process.env.PORT || PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
 cloudinary.v2.config({
   cloud_name: CLOUDNARY_CLOUD_NAME as string,
@@ -62,7 +60,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-if (NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(process.cwd(), "frontend/dist")));
 
   app.get("*", (req: Request, res: Response) => {
@@ -71,7 +69,7 @@ if (NODE_ENV === "production") {
 }
 
 connectDB().then(() => {
-  app.listen(port, () => {
-    console.log(`Server is running on port http://localhost:${port}`);
+  app.listen(PORT, () => {
+    console.log(`Server is running on port http://localhost:${PORT}`);
   });
 });
